@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>LS - Cotizaciones_Listado</title>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/Footer-Dark-Multi-Column-icons.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md bg-body container">
+            <div class="container-fluid"><a class="navbar-brand navbar-expand-lg"><img class="rounded-circle" src="../../assets/img/logo.png" style="width: 50px;margin-right: 10px;">Lucendi Solar</a>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/cotizaciones/">Cotizaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/clientes/">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#">Empresas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/conceptos">Conceptos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-md bg-dark py-0" data-bs-theme="dark">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="collapse navbar-collapse text-start justify-content-sm-end d-xs-flex" id="navcol-2">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="/empresas/">Todas las empresas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/empresas/create/">Nueva</a></li>
+                            <li class="nav-item"><a class="nav-link active disabled" href="#">Detalles</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main id="app">
+        <div class="container mt-3" v-if="empresa.id != 0">
+            <h3>Registro de empresa</h3>
+            <form v-on:submit.prevent="updateEmpresa">
+                <div class="input-group mb-3"><span class="input-group-text w-25">Nombre</span><input class="form-control" type="text" v-model="empresa.nombre" required=""></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Dirección</span><input class="form-control" type="text" v-model="empresa.direccion"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">RFC</span><input class="form-control" type="text" v-model="empresa.RFC"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Correo</span><input class="form-control" type="text" v-model="empresa.correo"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Teléfono</span><input class="form-control" type="text" v-model="empresa.telefono"></div><input class="btn btn-primary" type="submit" :disabled="isValid">
+            </form>
+        </div>
+        <div class="container mt-3" id="error" v-if="error.code != 200">
+            <div id="err-403">
+                <h1 class="d-flex text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-exclamation-circle my-auto me-3">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"></path>
+                    </svg>Error {{error.code}}</h1>
+                <p>{{error.userMessage}}</p><code>{{error.message}}</code>
+            </div>
+        </div>
+        <div id="loader" class="py-5 w-100 d-flex" v-if="loading">
+            <div class="mx-auto d-flex my-5"><span class="spinner-border me-3" role="status"></span><span class="my-auto">Cargando...</span></div>
+        </div>
+    </main>
+    <script src="../../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../assets/js/bs-init.js"></script>
+    <script src="../../assets/js/login.js"></script>
+    <script src="../../assets/js/vue.global.min.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/empresas/create.js"></script>
+</body>
+
+</html>

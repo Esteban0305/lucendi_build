@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.conceptoRouter = void 0;
+const express_1 = require("express");
+const concepto_controller_1 = require("../controllers/concepto.controller");
+exports.conceptoRouter = (0, express_1.Router)();
+exports.conceptoRouter.post('/', concepto_controller_1.createConcepto);
+exports.conceptoRouter.get('/:id', concepto_controller_1.showConcepto);
+exports.conceptoRouter.get('/find/:query', concepto_controller_1.findConcepto);
+// conceptoRouter.put('/:id', existsConcepto);
+exports.conceptoRouter.put('/:id', concepto_controller_1.updateConcepto);

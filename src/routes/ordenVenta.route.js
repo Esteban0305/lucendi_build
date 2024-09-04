@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ordenVentaRouter = void 0;
+const express_1 = require("express");
+const ordenVenta_controller_1 = require("../controllers/ordenVenta.controller");
+exports.ordenVentaRouter = (0, express_1.Router)();
+exports.ordenVentaRouter.get('/find/', ordenVenta_controller_1.listOrdenVenta);
+exports.ordenVentaRouter.post('/:id', ordenVenta_controller_1.createOrdenVenta);
+exports.ordenVentaRouter.get('/:id', ordenVenta_controller_1.showOrdenVenta);
+exports.ordenVentaRouter.get('/print/:id', ordenVenta_controller_1.printOrdenVenta);

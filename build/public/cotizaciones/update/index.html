@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>LS - Cotizaciones_Listado</title>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/Footer-Dark-Multi-Column-icons.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md bg-body container">
+            <div class="container-fluid"><a class="navbar-brand navbar-expand-lg"><img class="rounded-circle" src="../../assets/img/logo.png" style="width: 50px;margin-right: 10px;">Lucendi Solar</a>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link active" href="#">Cotizaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/clientes/">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/empresas">Empresas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/conceptos">Conceptos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-md bg-dark py-0" data-bs-theme="dark">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="collapse navbar-collapse text-start justify-content-sm-end d-xs-flex" id="navcol-2">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="/cotizaciones/">Todas las Cotizaciones</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#">Nueva</a></li>
+                            <li class="nav-item"><a class="nav-link disabled" href="#">Detalles</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main id="app">
+        <div class="container py-3" v-if="cotizacion.id != 0">
+            <div class="row d-none" id="data-control">
+                <div class="col-md-6 col-xl-6">
+                    <div class="input-group"><span class="input-group-text">Folio</span><input class="form-control" type="text" disabled="" :value="cotizacion.folio"></div>
+                </div>
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="input-group"><span class="input-group-text">Fecha</span><input class="form-control" type="text" disabled="" :value="cotizacion.fecha"></div>
+                </div>
+            </div>
+            <div class="row mt-2" id="data-control-price">
+                <div class="col col-md-4">
+                    <div class="input-group mb-2"><span class="input-group-text w-25">Subtotal</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(subtotal)"></div>
+                </div>
+                <div class="col d-flex flex-column col-md-4">
+                    <div class="input-group mb-2"><span class="input-group-text w-25">IVA</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(IVA)"></div>
+                </div>
+                <div class="col col-4">
+                    <div class="input-group mb-2"><span class="input-group-text w-25">Total</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(total)"></div>
+                </div>
+            </div>
+            <div id="data-scroller">
+                <div>
+                    <ul class="nav nav-tabs d-none" role="tablist" id="tab-items">
+                        <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-bs-toggle="tab" href="#tab-data-clientes">Tab 1</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-data-conceptos">Tab 2</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-data-miscelaneos">Tab 3</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-data-checkout">Tab 3</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" role="tabpanel" id="tab-data-clientes">
+                            <div id="data-clientes" v-if="!cotizacion.cliente">
+                                <h3 class="pt-3">Cliente</h3>
+                                <form id="form-search_cliente" class="d-flex my-3" v-on:submit.prevent="searchCliente"><input class="form-control form-control" type="search" placeholder="Nombre, RFC o correo" v-model="buscadores.cliente"><button class="btn btn-success d-flex ms-3" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search m-auto me-2">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                                        </svg>Buscar</button></form>
+                                <div class="table-responsive" id="table-clientes_search_results" v-if="resultados.clientes.length > 0">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>RFC</th>
+                                                <th>Correo</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="align-middle" v-for="cliente in resultados.clientes" v-on:click="selectCliente(cliente._id)">
+                                                <td>{{cliente.nombre}}</td>
+                                                <td>{{cliente.RFC}}</td>
+                                                <td>{{cliente.correo}}</td>
+                                                <td class="d-flex"><button class="btn btn-outline-secondary ms-auto" type="button" v-on:click="updateCliente(cliente._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-pencil-fill">
+                                                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                                                        </svg></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex"><a href="#" v-on:click="createCliente">Registar cliente</a></div>
+                            </div>
+                            <div id="cliente_empresa-selected" class="mb-5 mt-3" v-if="cotizacion.cliente">
+                                <h4>Cliente</h4>
+                                <form v-if="cotizacion.cliente">
+                                    <div class="input-group mb-3"><span class="input-group-text">Nombre</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.nombre"></div>
+                                    <div class="input-group mb-3"><span class="input-group-text">RFC</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.RFC"></div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div class="input-group"><span class="input-group-text">Correo</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.correo"></div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group"><span class="input-group-text">Teléfono</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.telefono"></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3"><span class="input-group-text">Dirección</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.direccion"></div>
+                                </form>
+                                <form v-if="cotizacion.cliente &amp;&amp; cotizacion.cliente.empresa">
+                                    <h4>Empresa</h4>
+                                    <div class="input-group mb-3"><span class="input-group-text">Nombre</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.nombre"></div>
+                                    <div class="input-group mb-3"><span class="input-group-text">RFC</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.RFC"></div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div class="input-group"><span class="input-group-text">Correo</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.correo"></div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group"><span class="input-group-text">Teléfono</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.telefono"></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3"><span class="input-group-text">Dirección</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.direccion"></div>
+                                    <div class="form-check d-none"><input class="form-check-input" type="checkbox" id="formCheck-3" checked=""><label class="form-check-label" for="formCheck-3">Tomar RFC, correo, teléfono y dirección de la empresa</label></div>
+                                </form><button class="btn btn-warning mt-3 me-3" type="button" v-on:click="changeCliente">Cambiar Cliente</button><button class="btn mt-3" type="button" v-on:click="updateCliente(cotizacion.cliente._id)">Editar Cliente</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="tab-data-conceptos">
+                            <div id="data-conceptos">
+                                <h3 class="pt-3">Conceptos</h3>
+                                <form id="form-search_concepto" class="d-flex my-3" v-on:submit.prevent="searchConcepto"><input class="form-control form-control" type="search" placeholder="Descripción del concepto" v-model="buscadores.concepto"><button class="btn btn-success d-flex ms-3" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search m-auto me-2">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                                        </svg>Buscar</button></form>
+                                <div class="table-responsive" id="table-conceptos_search_results" v-if="resultados.conceptos.length > 0">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Descripción</th>
+                                                <th>Precio</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="align-middle" v-for="concepto in resultados.conceptos" :key="concepto._id" v-on:click="selectConcepto(concepto._id)">
+                                                <td>{{concepto.codigo}}</td>
+                                                <td>{{concepto.descripcion}}</td>
+                                                <td>{{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(<br>&nbsp; concepto.precio,<br>&nbsp;)}}</td>
+                                                <td class="d-flex"><button class="btn btn-outline-dark ms-auto" type="button" v-on:click="updateConcepto(concepto.concepto._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-pencil">
+                                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"></path>
+                                                        </svg></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex"><a class="my-auto" href="#" v-on:click="createConcepto">Registrar concepto</a></div>
+                                <div id="conceptos-checkout-selected" class="mb-5 mt-3">
+                                    <h4>Conceptos agregados</h4>
+                                    <div class="table-responsive" id="table-conceptos-1" v-if="cotizacion.conceptos.size > 0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Descripción</th>
+                                                    <th>Cantidad</th>
+                                                    <th>P. Unitario</th>
+                                                    <th>P. Total</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="align-middle" v-for="concepto in Array.from(cotizacion.conceptos.values())" :key="concepto.id">
+                                                    <td>{{concepto.concepto.codigo}}</td>
+                                                    <td>{{concepto.concepto.descripcion}}</td>
+                                                    <td><button class="btn me-2" type="button" v-on:click="removeOneConcepto(concepto.concepto._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-dash">
+                                                                <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"></path>
+                                                            </svg></button>{{concepto.cantidad}}<button class="btn ms-2" type="button" v-on:click="addOneConcepto(concepto.concepto._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-plus">
+                                                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+                                                            </svg></button></td>
+                                                    <td>{{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(<br>&nbsp; concepto.concepto.precio,<br>&nbsp;)}}</td>
+                                                    <td>{{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(<br>&nbsp; concepto.total,<br>&nbsp;)}}</td>
+                                                    <td class="d-flex"><button class="btn ms-auto" type="button" v-on:click="removeConcepto(concepto.concepto._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-trash">
+                                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+                                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                                                            </svg></button><button class="btn" type="button" v-on:click="updateConcepto(concepto.concepto._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-pencil">
+                                                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"></path>
+                                                            </svg></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="alert alert-warning" role="alert" v-if="productos == 0"><span><strong>Sin conceptos</strong></span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="tab-data-miscelaneos">
+                            <div id="data-miscelaneos">
+                                <h3 class="pt-3">Miscelaneos</h3>
+                                <div class="d-flex"><label class="form-label my-auto">Retención de ISR</label><select class="ms-3 form-select w-25" v-model="cotizacion.retencionISR">
+                                        <option value="-1">Sin retención de ISR</option>
+                                        <option value="0" selected="">0%</option>
+                                        <option value="1">1%</option>
+                                        <option value="1.25">1.25%</option>
+                                        <option value="2.1">2.1%</option>
+                                        <option value="4">4%</option>
+                                        <option value="5">5%</option>
+                                        <option value="10">10%</option>
+                                        <option value="35">35%</option>
+                                    </select>
+                                    <div class="form-check my-auto ms-5"><input class="form-check-input" type="checkbox" id="formCheck-1" v-model="cotizacion.retencionIVA"><label class="form-check-label" for="formCheck-1" value="true">Retención de IVA</label></div>
+                                </div><label class="form-label my-3">Fecha de entrega</label>
+                                <div class="d-flex"><select class="form-select w-25" v-model="cotizacion.entrega.dias">
+                                        <option value="3D" selected="">3 días hábiles</option>
+                                        <option value="5D">5 días hábiles</option>
+                                        <option value="7D">7 días hábiles</option>
+                                        <option value="10D">10 días hábiles</option>
+                                        <option value="15D">15 días hábiles</option>
+                                        <option value="20D">20 días hábiles</option>
+                                        <option value="30D">30 días hábiles</option>
+                                        <option value="6S">6 semanas</option>
+                                        <option value="8S">8 semanas</option>
+                                        <option value="10S">10 semanas</option>
+                                    </select><label class="form-label mx-2 my-auto">a partir de</label><select class="form-select w-50" v-model="cotizacion.entrega.entr">
+                                        <option value="ROC" selected="">recibida la orden de compra</option>
+                                        <option value="RPT">realizado y comprobado el pago total de la cotización</option>
+                                        <option value="RPP50">realizado y comprobado el pago del 50% del precio de la cotización</option>
+                                        <option value="RPP60">realizado y comprobado el pago del 60% del precio de la cotización</option>
+                                        <option value="RPP70">realizado y comprobado el pago del 70% del precio de la cotización</option>
+                                        <option value="RPP80">realizado y comprobado el pago del 80% del precio de la cotización</option>
+                                        <option value="RPP90">realizado y comprobado el pago del 90% del precio de la cotización</option>
+                                    </select></div><label class="form-label mt-3">Observaciones</label><textarea class="form-control" rows="7" placeholder="Sin Observaciones" v-model="cotizacion.observaciones"></textarea>
+                            </div>
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="tab-data-checkout">
+                            <div id="checkout">
+                                <h2 class="pt-3">Detalles</h2>
+                                <div id="cliente_empresa-checkout" class="mb-5">
+                                    <h4>Cliente</h4>
+                                    <div class="alert alert-warning" role="alert" v-if="!cotizacion.cliente"><span><strong>Aún no se ha seleccionado ningún cliente</strong></span></div>
+                                    <form v-if="cotizacion.cliente">
+                                        <div class="input-group mb-3"><span class="input-group-text">Nombre</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.nombre"></div>
+                                        <div class="input-group mb-3"><span class="input-group-text">RFC</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.RFC"></div>
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <div class="input-group"><span class="input-group-text">Correo</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.correo"></div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="input-group"><span class="input-group-text">Teléfono</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.telefono"></div>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3"><span class="input-group-text">Dirección</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.direccion"></div>
+                                    </form>
+                                    <form v-if="cotizacion.cliente &amp;&amp; cotizacion.cliente.empresa">
+                                        <h4>Empresa</h4>
+                                        <div class="input-group mb-3"><span class="input-group-text">Nombre</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.nombre"></div>
+                                        <div class="input-group mb-3"><span class="input-group-text">RFC</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.RFC"></div>
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <div class="input-group"><span class="input-group-text">Correo</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.correo"></div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="input-group"><span class="input-group-text">Teléfono</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.telefono"></div>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3"><span class="input-group-text">Dirección</span><input class="form-control" type="text" disabled="" :value="cotizacion.cliente.empresa.direccion"></div>
+                                        <div class="form-check d-none"><input class="form-check-input" type="checkbox" id="formCheck-2" checked=""><label class="form-check-label" for="formCheck-2">Tomar RFC, correo, teléfono y dirección de la empresa</label></div>
+                                    </form>
+                                </div>
+                                <div id="conceptos-checkout" class="mb-5">
+                                    <h4>Conceptos</h4>
+                                    <div class="table-responsive" id="table-conceptos" v-if="productos > 0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Descripción</th>
+                                                    <th>Cantidad</th>
+                                                    <th>P. Unitario</th>
+                                                    <th>P. Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="align-middle" v-for="concepto in Array.from(cotizacion.conceptos.values())">
+                                                    <td>{{concepto.concepto.codigo}}</td>
+                                                    <td>{{concepto.concepto.descripcion}}</td>
+                                                    <td>{{concepto.cantidad}}</td>
+                                                    <td>{{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(<br>&nbsp; concepto.concepto.precio,<br>&nbsp;)}}</td>
+                                                    <td>{{new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(<br>&nbsp; concepto.total,<br>&nbsp;)}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="alert alert-warning" role="alert" v-if="productos == 0"><span><strong>Sin conceptos</strong></span></div>
+                                </div>
+                                <div id="precios-checkout">
+                                    <h4>Total</h4>
+                                    <div class="row" id="data-precios">
+                                        <div class="col">
+                                            <div class="input-group mb-2"><span class="input-group-text w-25">Subtotal</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(subtotal)"></div>
+                                            <div class="input-group mb-2"><span class="input-group-text w-25">IVA</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(IVA)"></div>
+                                            <div class="input-group mb-2" v-if="cotizacion.retencionIVA"><span class="input-group-text w-25">Retención IVA</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(-IVA)"></div>
+                                            <div class="input-group mb-2" v-if="cotizacion.retencionISR != -1"><span class="input-group-text w-25">ISR</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(ISR)"></div>
+                                            <div class="input-group mb-2"><span class="input-group-text w-25">Total</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(total)"></div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-2"><span class="input-group-text">Conceptos</span><input class="form-control" type="text" disabled="" :value="cotizacion.conceptos.size"></div>
+                                            <div class="input-group"><span class="input-group-text">Productos</span><input class="form-control" type="text" disabled="" :value="productos"></div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-2 d-none"><span class="input-group-text w-25">Entrega</span><input class="form-control" type="text" disabled="" :value="new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(total)"></div>
+                                    <div class="input-group mb-2"><span class="input-group-text w-25">Observaciones</span><input class="form-control" type="text" disabled="" :value="cotizacion.observaciones" placeholder="Sin observaciones"></div>
+                                </div>
+                                <hr>
+                                <div id="save_cancel" class="d-flex mt-3 mb-5"><button class="btn ms-auto me-3" type="button">Cancelar</button><button class="btn btn-success" type="button" v-on:click="update">Guardar con el mismo folio</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="page-controller" class="d-flex mt-3"><button class="btn btn-primary me-auto align-middle" id="prev-tab" type="button" v-on:click="prevTab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-chevron-left me-2">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+                    </svg>Regresar</button>
+                <div class="btn-group d-none" role="group"><button class="btn btn-primary" type="button">Cliente</button><button class="btn disabled btn-light" type="button" disabled="">Conceptos</button><button class="btn disabled btn-light" type="button" disabled="">Control</button><button class="btn disabled btn-light" type="button" disabled="">Detalles</button></div><button class="btn btn-primary ms-auto align-middle" id="next-tab" type="button" v-on:click="nextTab">Siguiente<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-chevron-right ms-2">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
+                    </svg></button>
+            </div>
+        </div>
+        <div class="container mt-3" id="error" v-if="error.code != 200">
+            <div id="err-403">
+                <h1 class="d-flex text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-exclamation-circle my-auto me-3">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"></path>
+                    </svg>Error {{error.code}}</h1>
+                <p>{{error.userMessage}}</p><code>{{error.message}}</code>
+            </div>
+        </div>
+        <div id="loader" class="py-5 w-100 d-flex" v-if="loading">
+            <div class="mx-auto d-flex my-5"><span class="spinner-border me-3" role="status"></span><span class="my-auto">Cargando...</span></div>
+        </div>
+    </main>
+    <script src="../../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../assets/js/bs-init.js"></script>
+    <script src="../../assets/js/login.js"></script>
+    <script src="../../assets/js/vue.global.min.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/cotizaciones/update.js"></script>
+</body>
+
+</html>

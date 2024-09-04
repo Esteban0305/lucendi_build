@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>LS - Cotizaciones_Listado</title>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/Footer-Dark-Multi-Column-icons.css">
+</head>
+
+<body id="app">
+    <header>
+        <nav class="navbar navbar-expand-md bg-body container">
+            <div class="container-fluid"><a class="navbar-brand navbar-expand-lg"><img class="rounded-circle" src="../../assets/img/logo.png" style="width: 50px;margin-right: 10px;">Lucendi Solar</a>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/cotizaciones">Cotizaciones</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/empresas/">Empresas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/conceptos/">Conceptos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-md bg-dark py-0" data-bs-theme="dark">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="collapse navbar-collapse text-start justify-content-sm-end d-xs-flex" id="navcol-2">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="/clientes/">Todos los clientes</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#">Nuevo</a></li>
+                            <li class="nav-item"><a class="nav-link disabled" href="#">Detalles</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <form id="cliente-data" class="my-3" v-on:submit.prevent="createCliente">
+            <h3>Registro de Cliente</h3>
+            <div class="input-group my-2"><span class="input-group-text w-25">Nombre</span><input class="form-control" type="text" v-model="cliente.nombre" required=""></div>
+            <div class="input-group my-2"><span class="input-group-text w-25">RFC</span><input class="form-control" type="text" v-model="cliente.RFC"></div>
+            <div class="row">
+                <div class="col col-md-6 col-12">
+                    <div class="input-group"><span class="input-group-text w-25">Correo</span><input class="form-control" type="email" v-model="cliente.correo"></div>
+                </div>
+                <div class="col col-md-6 col-12 mt-md-0 mt-2">
+                    <div class="input-group"><span class="input-group-text w-25">Teléfono</span><input class="form-control" type="text" v-model="cliente.telefono"></div>
+                </div>
+            </div>
+            <div class="input-group my-2"><span class="input-group-text w-25">Dirección</span><input class="form-control" type="text" v-model="cliente.direccion"></div>
+            <div class="input-group my-2" v-if="cliente.empresa_id"><span class="input-group-text w-25">Empresa</span><input class="form-control" type="text" v-model="cliente.empresa_id.nombre" disabled=""></div>
+        </form><button class="btn btn-warning" type="button" v-if="cliente.empresa_id != null" v-on:click="changeEmpresa">Cambiar Empresa</button>
+        <hr>
+        <div id="empresa-data" class="mb-3" v-if="cliente.empresa_id == null">
+            <h4>Empresa</h4>
+            <form id="empresa-search" class="d-flex mb-2" v-on:submit.prevent="searchEmpresa"><input class="form-control" type="search" placeholder="Nombre, RFC de la empresa" v-model="buscadores.empresa"><button class="btn btn-primary ms-2 d-flex align-middle" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search my-auto">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                    </svg><span class="d-sm-none d-md-inline ms-2">Buscar</span></button></form>
+            <div class="table-responsive" v-if="resultados.empresa.length > 0">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th class="d-md-table-cell d-none">Correo</th>
+                            <th>RFC</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" v-for="empresa in resultados.empresa" v-on:click="selectEmpresa(empresa._id)">
+                            <td>{{empresa.nombre}}</td>
+                            <td class="d-md-table-cell d-none">{{empresa.correo}}</td>
+                            <td>{{empresa.RFC}}</td>
+                            <td class="d-flex"><button class="btn ms-auto" type="button" v-on:click="updateEmpresa(empresa._id)"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-pencil">
+                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"></path>
+                                    </svg></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><a href="#" v-on:click="createEmpresa">Registrar empresa</a>
+        </div>
+        <div class="d-flex"><input class="btn btn-primary ms-auto" type="submit" v-on:click="createCliente" :disabled="dataComplete"></div>
+    </div>
+    <script src="../../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../assets/js/bs-init.js"></script>
+    <script src="../../assets/js/login.js"></script>
+    <script src="../../assets/js/vue.global.min.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/clientes/create.js"></script>
+</body>
+
+</html>

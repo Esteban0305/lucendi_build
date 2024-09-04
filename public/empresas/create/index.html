@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>LS - Cotizaciones_Listado</title>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/Footer-Dark-Multi-Column-icons.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md bg-body container">
+            <div class="container-fluid"><a class="navbar-brand navbar-expand-lg"><img class="rounded-circle" src="../../assets/img/logo.png" style="width: 50px;margin-right: 10px;">Lucendi Solar</a>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/cotizaciones/">Cotizaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/clientes/">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/empresas">Empresas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/conceptos">Conceptos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-md bg-dark py-0" data-bs-theme="dark">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="collapse navbar-collapse text-start justify-content-sm-end d-xs-flex" id="navcol-2">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="/empresas/">Todas las empresas</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#">Nueva</a></li>
+                            <li class="nav-item"><a class="nav-link disabled" href="#">Detalles</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-3" id="app">
+            <h3>Registro de empresa</h3>
+            <form v-on:submit.prevent="createEmpresa">
+                <div class="input-group mb-3"><span class="input-group-text w-25">Nombre</span><input class="form-control" type="text" v-model="empresa.nombre"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Dirección</span><input class="form-control" type="text" v-model="empresa.direccion"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">RFC</span><input class="form-control" type="text" v-model="empresa.RFC"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Correo</span><input class="form-control" type="text" v-model="empresa.correo"></div>
+                <div class="input-group mb-3"><span class="input-group-text w-25">Teléfono</span><input class="form-control" type="text" v-model="empresa.telefono"></div><input class="btn btn-primary" type="submit" :disabled="isValid">
+            </form>
+        </div>
+    </header>
+    <script src="../../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../assets/js/bs-init.js"></script>
+    <script src="../../assets/js/login.js"></script>
+    <script src="../../assets/js/vue.global.min.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/empresas/create.js"></script>
+</body>
+
+</html>

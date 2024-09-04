@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.empresaRouter = void 0;
+const express_1 = require("express");
+const empresa_controller_1 = require("../controllers/empresa.controller");
+exports.empresaRouter = (0, express_1.Router)();
+exports.empresaRouter.get("/:id", empresa_controller_1.showEmpresa);
+exports.empresaRouter.get("/find/:query", empresa_controller_1.findEmpresa);
+exports.empresaRouter.post("/", empresa_controller_1.createEmpresa);
+// empresaRouter.put("/:id", existsEmpresa);
+exports.empresaRouter.put("/:id", empresa_controller_1.updateEmpresa);

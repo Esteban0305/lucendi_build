@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cotizacionRoute = void 0;
+const express_1 = require("express");
+const cotizacion_controller_1 = require("../controllers/cotizacion.controller");
+exports.cotizacionRoute = (0, express_1.Router)();
+exports.cotizacionRoute.get('/find/', cotizacion_controller_1.listCotizaciones);
+exports.cotizacionRoute.get('/:id', cotizacion_controller_1.showCotizacion);
+exports.cotizacionRoute.post('/', cotizacion_controller_1.createCotizacion);
+// cotizacionRoute.put('/:id', existsCotizacion);
+exports.cotizacionRoute.put('/:id', cotizacion_controller_1.updateCotizacion);
+// cotizacionRoute.get('/print/:id', existsCotizacion);
+exports.cotizacionRoute.get('/print/:id', cotizacion_controller_1.printCotizacion);
